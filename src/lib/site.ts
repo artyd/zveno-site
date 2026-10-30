@@ -1,5 +1,3 @@
-// Set `windows` to the installer URL when the first public build is out.
-// Until then the Download buttons scroll to the download section.
 export const DOWNLOAD = {
   // The newest installer: each release also carries it as Zveno-Setup.exe, without the version.
   windows: "https://github.com/artyd/zveno-releases/releases/latest/download/Zveno-Setup.exe",
