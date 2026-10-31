@@ -2,6 +2,7 @@ import { Check, FileText, Pencil, SquareTerminal } from "lucide-react";
 import { Bug, ORCH_LOOK } from "../Bug";
 import { Reveal } from "../Reveal";
 import { SectionHead } from "../SectionHead";
+import { Slide } from "../Slide";
 
 function Orchestrate() {
   return (
@@ -122,27 +123,25 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section id="how" className="slide px-4 py-20 sm:px-6 sm:py-24">
-      <div className="mx-auto max-w-6xl">
-        <SectionHead label="How it works" title="One person, a whole team." rest="You set the direction; the agents do the typing." />
-        <ol className="relative mt-14 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {/* the chain that links the steps */}
-          <div
-            aria-hidden="true"
-            className="absolute top-[34px] right-[12%] left-[12%] hidden border-t-2 border-dashed border-line-strong xl:block"
-          />
-          {STEPS.map((s, i) => (
-            <Reveal as="li" key={s.n} delay={i * 80} className="glass-panel relative flex flex-col rounded-[18px] p-5">
-              <span className="glass-surface relative flex size-10 items-center justify-center rounded-full font-mono text-[12px] font-semibold text-accent">
-                {s.n}
-              </span>
-              <h3 className="mt-5 text-[17px] leading-snug font-semibold tracking-[-0.01em]">{s.title}</h3>
-              <p className="mt-2 text-[14px] text-muted">{s.body}</p>
-              <div className="mt-auto pt-6">{s.visual}</div>
-            </Reveal>
-          ))}
-        </ol>
-      </div>
-    </section>
+    <Slide id="how">
+      <SectionHead label="How it works" title="One person, a whole team." rest="You set the direction; the agents do the typing." />
+      <ol className="relative mt-14 grid gap-4 md:grid-cols-2 xl:grid-cols-4 deck:mt-[clamp(16px,3.5vh,48px)]">
+        {/* the chain that links the steps */}
+        <div
+          aria-hidden="true"
+          className="absolute top-[34px] right-[12%] left-[12%] hidden border-t-2 border-dashed border-line-strong xl:block"
+        />
+        {STEPS.map((s, i) => (
+          <Reveal as="li" key={s.n} delay={i * 80} className="glass-panel relative flex flex-col rounded-[18px] p-5 deck:p-[clamp(14px,2.2vh,20px)]">
+            <span className="glass-surface relative flex size-10 items-center justify-center rounded-full font-mono text-[12px] font-semibold text-accent">
+              {s.n}
+            </span>
+            <h3 className="mt-5 text-[17px] leading-snug font-semibold tracking-[-0.01em] deck:mt-[clamp(8px,2vh,20px)]">{s.title}</h3>
+            <p className="mt-2 text-[14px] text-muted deck:text-[clamp(12.5px,1.85vh,14px)]">{s.body}</p>
+            <div className="mt-auto pt-6 deck:pt-[clamp(10px,2.4vh,24px)]">{s.visual}</div>
+          </Reveal>
+        ))}
+      </ol>
+    </Slide>
   );
 }

@@ -3,6 +3,7 @@ import { DOWNLOAD } from "@/lib/site";
 import { Bug, ORCH_LOOK, type Badge, type Look, type Mood } from "../Bug";
 import { WindowsIcon } from "../Mark";
 import { Shot, WindowFrame } from "../Shot";
+import { Slide } from "../Slide";
 
 const ROSTER: { name: string; meta: string; look: Look; mood: Mood; badge?: Badge; status: string; tone: string }[] = [
   { name: "Orchestrator", meta: "plans and assigns", look: ORCH_LOOK, mood: "idle", status: "lead", tone: "text-answer bg-answer-bg" },
@@ -13,51 +14,56 @@ const ROSTER: { name: string; meta: string; look: Look; mood: Mood; badge?: Badg
 
 export function Hero() {
   return (
-    <section id="top" className="slide relative px-4 pt-32 pb-16 sm:px-6 sm:pt-40">
-      <div className="mx-auto max-w-4xl text-center">
-        <p className="rise glass-surface mx-auto inline-flex items-center gap-2 rounded-full py-1 pr-3.5 pl-1.5 font-mono text-[11.5px] text-muted">
-          <Bug look={{ hue: 250, pat: "dots" }} mood="working" size={20} />
-          Desktop app · Windows first
-        </p>
-        <h1
-          className="rise mt-6 text-[40px] leading-[1.04] font-semibold tracking-[-0.035em] text-balance sm:text-[60px] lg:text-[72px]"
-          style={{ animationDelay: "60ms" }}
-        >
-          The key link between an idea and a product <span className="text-accent">is you.</span>
-        </h1>
-        <p
-          className="rise mx-auto mt-6 max-w-2xl text-[17px] leading-relaxed text-muted text-pretty sm:text-lg"
-          style={{ animationDelay: "120ms" }}
-        >
-          Zveno runs a team of AI coding agents on your own computer. You talk to the Orchestrator. It plans the work,
-          hands it to Claude Code and Codex, and brings you only the decisions.
-        </p>
-        <div className="rise mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "180ms" }}>
-          <a href={DOWNLOAD.windows} className="btn btn-strong w-full !min-h-12 !px-6 !text-[15px] sm:w-auto">
-            <WindowsIcon />
-            Download for Windows
-          </a>
-          <a href="#how" className="btn btn-ghost w-full !min-h-12 !px-6 !text-[15px] sm:w-auto">
-            See how it works
-            <ArrowDown size={16} />
-          </a>
-        </div>
-        <p className="rise mt-4 font-mono text-[11.5px] text-faint" style={{ animationDelay: "220ms" }}>
-          {DOWNLOAD.requirements} · macOS, Linux and phones coming
-        </p>
+    <Slide id="top" bodyClassName="max-w-[1500px] text-center">
+      <p className="rise glass-surface mx-auto inline-flex items-center gap-2 rounded-full py-1 pr-3.5 pl-1.5 font-mono text-[11.5px] text-muted">
+        <Bug look={{ hue: 250, pat: "dots" }} mood="working" size={20} />
+        Desktop app · Windows first
+      </p>
+      <h1
+        className="rise mx-auto mt-[clamp(12px,2.4vh,24px)] max-w-4xl text-[40px] leading-[1.04] font-semibold tracking-[-0.035em] text-balance sm:text-[60px] deck:text-[clamp(28px,5.4vh,64px)] lg:text-[72px]"
+        style={{ animationDelay: "60ms" }}
+      >
+        The key link between an idea and a product <span className="text-accent">is you.</span>
+      </h1>
+      <p
+        className="rise mx-auto mt-[clamp(10px,2vh,24px)] max-w-3xl text-[17px] leading-relaxed text-muted text-pretty sm:text-lg deck:text-[clamp(14px,2.1vh,18px)]"
+        style={{ animationDelay: "120ms" }}
+      >
+        Zveno runs a team of AI coding agents on your own computer. You talk to the Orchestrator. It plans the work, hands it to
+        Claude Code and Codex, and brings you only the decisions.
+      </p>
+      <div
+        className="rise mt-[clamp(14px,2.6vh,32px)] flex flex-col items-center justify-center gap-3 sm:flex-row"
+        style={{ animationDelay: "180ms" }}
+      >
+        <a href={DOWNLOAD.windows} className="btn btn-strong w-full !min-h-12 !px-6 !text-[15px] sm:w-auto">
+          <WindowsIcon />
+          Download for Windows
+        </a>
+        <a href="#how" className="btn btn-ghost w-full !min-h-12 !px-6 !text-[15px] sm:w-auto">
+          See how it works
+          <ArrowDown size={16} />
+        </a>
       </div>
+      <p className="rise mt-[clamp(8px,1.4vh,16px)] font-mono text-[11.5px] text-faint" style={{ animationDelay: "220ms" }}>
+        {DOWNLOAD.requirements} · macOS, Linux and phones coming
+      </p>
 
-      <div className="rise relative mx-auto mt-14 max-w-6xl sm:mt-20" style={{ animationDelay: "280ms" }}>
-        <WindowFrame>
+      <div
+        className="rise relative mt-[clamp(14px,2.8vh,40px)] deck:flex deck:items-end deck:justify-center"
+        style={{ animationDelay: "280ms", "--fit-h-deck": "calc(66svh - 176px)" } as React.CSSProperties}
+      >
+        <WindowFrame className="fit-w hero-shot deck:order-2" style={{ "--ar": 1.6 } as React.CSSProperties}>
           <Shot
             name="feed"
             alt="Zveno main window: the frontend agent's feed with plan, read, edit and test steps, the agent list on the left and token usage on the right."
+            sizes="(min-width: 1200px) 900px, 100vw"
             priority
           />
         </WindowFrame>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:contents">
-          <div className="glass-window rounded-[16px] p-3 text-left lg:absolute lg:-bottom-10 lg:left-4 xl:-left-6 lg:w-[300px]">
+        <div className="mt-4 grid gap-3 text-left sm:grid-cols-2 deck:contents">
+          <div className="glass-window relative z-10 rounded-[16px] p-3 deck:order-1 deck:mb-[3%] deck:-mr-14 deck:w-[270px] deck:shrink-0 deck:max-[1179px]:hidden">
             <p className="label px-2 pt-1 pb-2">Your team</p>
             <ul className="space-y-0.5">
               {ROSTER.map((a) => (
@@ -73,7 +79,7 @@ export function Hero() {
             </ul>
           </div>
 
-          <div className="glass-window rounded-[16px] p-4 text-left lg:absolute lg:right-4 lg:-bottom-8 xl:-right-6 lg:w-[320px]">
+          <div className="glass-window relative z-10 rounded-[16px] p-4 deck:order-3 deck:mb-[7%] deck:-ml-14 deck:w-[290px] deck:shrink-0 deck:max-[1179px]:hidden">
             <div className="flex items-center gap-2">
               <span className="font-mono text-[10.5px] font-semibold tracking-wider text-warn">DEPLOY</span>
               <span className="font-mono text-[11px] text-faint">deploy-bot · waiting 24 min</span>
@@ -90,6 +96,6 @@ export function Hero() {
           </div>
         </div>
       </div>
-    </section>
+    </Slide>
   );
 }
