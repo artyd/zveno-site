@@ -355,6 +355,10 @@ body::before {
 
 /* Horizontal rail: hides the scrollbar, snaps cards. */
 .rail {
+  /* The first card lines up with the section heading (max-w-6xl) and clears the edge fade. */
+  --rail-inset: max(1rem, calc((100% - 72rem) / 2));
+  padding-inline: var(--rail-inset);
+  scroll-padding-inline: var(--rail-inset);
   scroll-snap-type: x proximity;
   scrollbar-width: none;
   overscroll-behavior-x: contain;

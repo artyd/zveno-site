@@ -51,7 +51,7 @@ export function SideDots() {
               >
                 <span
                   className={`block rounded-full transition-all duration-300 ${
-                    on ? "h-4 w-1.5 bg-accent" : "size-1.5 bg-idle group-hover:bg-muted"
+                    on ? "h-4 w-1.5 bg-accent" : "size-1.5 bg-muted opacity-60 group-hover:opacity-100"
                   }`}
                 />
               </a>

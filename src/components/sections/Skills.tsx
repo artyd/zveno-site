@@ -106,7 +106,7 @@ export function Skills() {
           onPointerUp={onUp}
           onPointerCancel={onUp}
           onPointerLeave={onUp}
-          className={`rail flex gap-4 overflow-x-auto px-4 py-3 sm:px-6 ${dragging ? "cursor-grabbing select-none" : "md:cursor-grab"}`}
+          className={`rail flex gap-4 overflow-x-auto py-3${dragging ? "cursor-grabbing select-none" : "md:cursor-grab"}`}
           style={{ maskImage: mask, WebkitMaskImage: mask, scrollSnapType: dragging ? "none" : undefined }}
         >
           <div className="flex w-[240px] shrink-0 flex-col justify-center pr-2 sm:w-[260px]">
