@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+/* Slide layout: every section is exactly one screen. Narrow or short screens scroll normally. */
+@custom-variant deck (@media (min-width: 768px) and (min-height: 600px));
 
 /* Theme tokens copied from THEMES in Zveno/design/Zveno.dc.html (SPEC §4.3). */
 :root {
@@ -290,29 +292,83 @@ body::before {
   to { opacity: 1; transform: none; }
 }
 
-/* Slides: each top-level section is at least one screen tall, content centred. */
+/* Slides: each top-level section is one screen on desktop, a normal block on phones and short windows. */
 .slide {
+  position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   min-height: 100svh;
+  padding: 6rem 1rem 3rem;
 }
-.slide > * {
-  width: 100%;
+@media (min-width: 640px) {
+  .slide {
+    padding-inline: 1.5rem;
+  }
 }
-@media (min-width: 768px) {
+@layer components {
+  .slide-body {
+    width: 100%;
+    max-width: 72rem;
+    flex: none;
+  }
+}
+
+@media (min-width: 768px) and (min-height: 600px) {
+  :root {
+    --slide-pt: clamp(72px, 10.5vh, 104px);
+    --slide-pb: clamp(14px, 3vh, 40px);
+  }
   html {
-    scroll-snap-type: y proximity;
+    scroll-padding-top: 0;
   }
   .slide {
+    height: 100svh;
+    min-height: 0;
+    overflow: hidden;
+    padding-top: var(--slide-pt);
+    padding-bottom: var(--slide-pb);
     scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
+}
+@media (min-width: 768px) and (min-height: 600px) and (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: auto;
+  }
+}
+
+/* A screenshot sized by the height it may use, so it never grows past its slide. */
+.fit-w {
+  --fit-h: 9999px;
+  width: min(100%, calc(var(--fit-h) * var(--ar, 1.6)));
+  margin-inline: auto;
+}
+@media (min-width: 768px) and (min-height: 600px) {
+  .fit-w {
+    --fit-h: var(--fit-h-deck, 9999px);
+  }
+}
+
+/* Incoming content: while the deck is driving, a slide's blocks rise in once it becomes the current one. */
+html[data-deck] .slide:not(.is-active) :is(.reveal, .reveal-stagger > *) {
+  opacity: 0;
+  transform: translateY(26px);
+  transition-duration: 0.3s;
+  transition-delay: 0s;
+}
+html[data-deck] .slide.is-active :is(.reveal, .reveal-stagger > *) {
+  opacity: 1;
+  transform: none;
 }
 
 .reveal {
   opacity: 0;
   transform: translateY(14px);
   transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--d, 0ms);
 }
 .reveal.is-in {
   opacity: 1;
@@ -334,8 +390,55 @@ body::before {
   opacity: 1;
   transform: none;
 }
+html[data-deck] .slide.is-active .reveal {
+  transition-delay: calc(220ms + var(--d, 0ms));
+}
+html[data-deck] .slide.is-active .reveal-stagger > * {
+  transition-delay: calc(220ms + var(--i, 0) * var(--stagger, 70ms));
+}
 .rise {
   animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Autoplay progress under the active tab. Runs on transform only; paused with animation-play-state. */
+@keyframes barFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.autoplay-bar {
+  transform-origin: left center;
+  animation: barFill var(--ms, 3000ms) linear forwards;
+}
+
+/* Infinite marquee: the track holds two copies of a row and slides by half its width. */
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--dur, 70s) linear infinite;
+  animation-direction: var(--dir, normal);
+  animation-play-state: paused;
+  will-change: transform;
+}
+.slide.is-visible .marquee-track {
+  animation-play-state: running;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+/* A line that travels along the Orchestrator's links. */
+@keyframes linkPulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -350,6 +453,15 @@ body::before {
   .reveal, .reveal-stagger > * {
     opacity: 1;
     transform: none;
+  }
+  /* A marquee that does not move becomes a row you scroll yourself. */
+  .marquee {
+    overflow-x: auto;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .marquee-track {
+    animation: none !important;
   }
 }
 
@@ -368,4 +480,12 @@ body::before {
 }
 .rail > * {
   scroll-snap-align: start;
+}
+
+/* The hero screenshot makes room for the roster and deploy cards that sit beside it. */
+@media (min-width: 1180px) and (min-height: 600px) {
+  .hero-shot {
+    width: min(calc(100% - 450px), calc(var(--fit-h) * var(--ar, 1.6)));
+    margin-inline: 0;
+  }
 }

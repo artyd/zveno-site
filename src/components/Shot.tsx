@@ -28,6 +28,21 @@ export function Shot({
 }
 
 // Glass edge around a screenshot; the screenshots already carry the app's own header and window controls.
-export function WindowFrame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`glass-window overflow-hidden rounded-[12px] p-1 sm:rounded-[20px] sm:p-1.5 [&_img]:rounded-[8px] sm:[&_img]:rounded-[14px] ${className}`}>{children}</div>;
+export function WindowFrame({
+  children,
+  className = "",
+  style,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <div
+      style={style}
+      className={`glass-window overflow-hidden rounded-[12px] p-1 sm:rounded-[20px] sm:p-1.5 [&_img]:rounded-[8px] sm:[&_img]:rounded-[14px] ${className}`}
+    >
+      {children}
+    </div>
+  );
 }

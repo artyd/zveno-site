@@ -13,7 +13,9 @@ npm run build
 ## Where things are
 
 - `src/app/globals.css`: theme tokens (light / dark), glass utilities, mascot keyframes.
-- `src/components/sections/`: one file per page section (Hero, HowItWorks, FeatureTour, Bento, Providers, Security, Download, Footer).
+- `src/components/sections/`: one file per page section (Hero, HowItWorks, FeatureTour, Bento, Skills, Providers, Security, Download; Footer sits at the bottom of the last slide).
+- `src/components/Deck.tsx`: the presentation controller. Each section is one 100svh slide on desktop (width >= 768 and height >= 600, no reduced motion). One wheel gesture, PageUp/PageDown, Space or arrow moves one slide with a 700ms eased scroll; anchors jump to their slide. Content that does not fit is scaled down. Phones, short windows and reduced motion scroll normally.
+- `src/components/Autoplay.tsx`: autoplay for the carousels (3s, pauses on hover, focus, hidden tab and off-screen; off under reduced motion).
 - `src/components/Bug.tsx`: the agent mascot, a port of `bugEl()` from `design/Zveno.dc.html`.
 - `src/lib/site.ts`: download link, nav links, quotes. Set `DOWNLOAD.windows` to the installer URL when the first public build is out.
 - `public/shots/`: screenshots of the Zveno prototype, `light-*` and `dark-*` for each screen. The page shows the one that matches the theme.

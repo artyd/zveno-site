@@ -51,7 +51,7 @@ export function Reveal({
   const style = staggered
     ? ({ "--stagger": `${stagger}ms` } as CSSProperties)
     : delay
-      ? { transitionDelay: `${delay}ms` }
+      ? ({ "--d": `${delay}ms` } as CSSProperties)
       : undefined;
 
   return (
