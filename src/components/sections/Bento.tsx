@@ -48,7 +48,7 @@ const CARDS = [
 
 export function Bento() {
   return (
-    <section className="px-4 pb-20 sm:px-6 sm:pb-24">
+    <section id="more" className="slide px-4 py-20 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead label="And the rest of the day" title="Plan, track, roll back." rest="Without opening five other tools." />
         <div className="mt-12 grid gap-4 md:grid-cols-2">
@@ -72,7 +72,7 @@ export function Bento() {
                     height={c.h}
                     sizes={c.wide ? "(min-width: 1024px) 800px, 100vw" : "(min-width: 768px) 560px, 100vw"}
                     quality={90}
-                    className={`${t === "light" ? "only-light" : "only-dark"} h-auto w-full`}
+                    className={`${t === "light" ? "only-light" : "only-dark"} h-auto w-full rounded-[11px]`}
                   />
                 ))}
               </div>

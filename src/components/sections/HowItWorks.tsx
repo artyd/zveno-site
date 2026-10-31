@@ -122,7 +122,7 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section id="how" className="px-4 py-20 sm:px-6 sm:py-24">
+    <section id="how" className="slide px-4 py-20 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead label="How it works" title="One person, a whole team." rest="You set the direction; the agents do the typing." />
         <ol className="relative mt-14 grid gap-4 md:grid-cols-2 xl:grid-cols-4">

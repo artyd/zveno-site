@@ -7,13 +7,13 @@ import { Shot, WindowFrame } from "../Shot";
 const ROSTER: { name: string; meta: string; look: Look; mood: Mood; badge?: Badge; status: string; tone: string }[] = [
   { name: "Orchestrator", meta: "plans and assigns", look: ORCH_LOOK, mood: "idle", status: "lead", tone: "text-answer bg-answer-bg" },
   { name: "frontend", meta: "Claude Code · sonnet", look: { hue: 250, pat: "dots" }, mood: "working", status: "working", tone: "text-ok bg-ok-bg" },
-  { name: "backend-api", meta: "Codex · gpt-5-codex", look: { hue: 160, pat: "chevron" }, mood: "waiting", badge: "q", status: "asks you", tone: "text-warn bg-warn-bg" },
+  { name: "backend-api", meta: "Codex · gpt-6.1-sol", look: { hue: 160, pat: "chevron" }, mood: "waiting", badge: "q", status: "asks you", tone: "text-warn bg-warn-bg" },
   { name: "tests", meta: "Claude Code · haiku", look: { hue: 330, pat: "spots" }, mood: "queued", status: "queued", tone: "text-accent bg-accent-bg" },
 ];
 
 export function Hero() {
   return (
-    <section id="top" className="relative px-4 pt-32 sm:px-6 sm:pt-40">
+    <section id="top" className="slide relative px-4 pt-32 pb-16 sm:px-6 sm:pt-40">
       <div className="mx-auto max-w-4xl text-center">
         <p className="rise glass-surface mx-auto inline-flex items-center gap-2 rounded-full py-1 pr-3.5 pl-1.5 font-mono text-[11.5px] text-muted">
           <Bug look={{ hue: 250, pat: "dots" }} mood="working" size={20} />

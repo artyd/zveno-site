@@ -7,6 +7,7 @@ export const DOWNLOAD = {
 export const NAV = [
   { href: "#how", label: "How it works" },
   { href: "#tour", label: "Product" },
+  { href: "#skills", label: "Skills" },
   { href: "#providers", label: "Providers" },
   { href: "#security", label: "Security" },
 ];

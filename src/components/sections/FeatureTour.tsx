@@ -90,7 +90,7 @@ export function FeatureTour() {
   const tab = TABS[active];
 
   return (
-    <section id="tour" className="px-4 py-20 sm:px-6 sm:py-24">
+    <section id="tour" className="slide px-4 py-20 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead label="Product" title="Built for watching a team work." rest="And stepping in only when it matters." />
 

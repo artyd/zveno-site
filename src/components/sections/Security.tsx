@@ -26,7 +26,7 @@ const POINTS = [
 
 export function Security() {
   return (
-    <section id="security" className="px-4 py-20 sm:px-6 sm:py-24">
+    <section id="security" className="slide px-4 py-20 sm:px-6 sm:py-24">
       <div className="glass-window mx-auto max-w-6xl rounded-[24px] p-6 sm:p-12">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
           <Reveal>

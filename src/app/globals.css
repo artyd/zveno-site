@@ -290,12 +290,47 @@ body::before {
   to { opacity: 1; transform: none; }
 }
 
+/* Slides: each top-level section is at least one screen tall, content centred. */
+.slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100svh;
+}
+.slide > * {
+  width: 100%;
+}
+@media (min-width: 768px) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+  .slide {
+    scroll-snap-align: start;
+  }
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(14px);
   transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+/* Staggered children: each direct child fades up in turn once the parent is in view. */
+.reveal-stagger {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: calc(var(--i, 0) * var(--stagger, 70ms));
+}
+.reveal-stagger.is-in > * {
   opacity: 1;
   transform: none;
 }
@@ -312,8 +347,21 @@ body::before {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
-  .reveal {
+  .reveal, .reveal-stagger > * {
     opacity: 1;
     transform: none;
   }
+}
+
+/* Horizontal rail: hides the scrollbar, snaps cards. */
+.rail {
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.rail::-webkit-scrollbar {
+  display: none;
+}
+.rail > * {
+  scroll-snap-align: start;
 }

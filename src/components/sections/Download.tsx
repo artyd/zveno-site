@@ -11,7 +11,7 @@ const PLATFORMS = [
 
 export function Download() {
   return (
-    <section id="download" className="px-4 py-20 sm:px-6 sm:py-24">
+    <section id="download" className="slide px-4 py-20 sm:px-6 sm:py-24">
       <Reveal className="mx-auto max-w-3xl text-center">
         <Mark size={88} className="mx-auto text-text" style={{ animation: "markPulse 1.6s ease-in-out infinite" }} />
         <h2 className="mt-8 text-[34px] leading-[1.08] font-semibold tracking-[-0.035em] text-balance sm:text-[56px]">
