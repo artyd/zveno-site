@@ -1,8 +1,8 @@
 import { Nav } from "@/components/Nav";
 import { Bento } from "@/components/sections/Bento";
+import { Cover } from "@/components/sections/Cover";
 import { Download } from "@/components/sections/Download";
 import { FeatureTour } from "@/components/sections/FeatureTour";
-import { Hero } from "@/components/sections/Hero";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Deck } from "@/components/Deck";
 import { Providers } from "@/components/sections/Providers";
@@ -15,7 +15,7 @@ export default function Home() {
       <Nav />
       <Deck />
       <main>
-        <Hero />
+        <Cover />
         <HowItWorks />
         <FeatureTour />
         <Bento />
