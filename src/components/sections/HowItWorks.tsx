@@ -126,11 +126,6 @@ export function HowItWorks() {
     <Slide id="how">
       <SectionHead label="How it works" title="One person, a whole team." rest="You set the direction; the agents do the typing." />
       <ol className="relative mt-14 grid gap-4 md:grid-cols-2 xl:grid-cols-4 deck:mt-[clamp(16px,3.5vh,48px)]">
-        {/* the chain that links the steps */}
-        <div
-          aria-hidden="true"
-          className="absolute top-[34px] right-[12%] left-[12%] hidden border-t-2 border-dashed border-line-strong xl:block"
-        />
         {STEPS.map((s, i) => (
           <Reveal as="li" key={s.n} delay={i * 80} className="glass-panel relative flex flex-col rounded-[18px] p-5 deck:p-[clamp(14px,2.2vh,20px)]">
             <span className="glass-surface relative flex size-10 items-center justify-center rounded-full font-mono text-[12px] font-semibold text-accent">
