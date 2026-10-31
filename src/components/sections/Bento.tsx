@@ -1,15 +1,15 @@
 "use client";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { useRef, type CSSProperties } from "react";
-import { ProgressBar, useAutoplay } from "../Autoplay";
+import { useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
+import { StoryBars, useAutoplay } from "../Autoplay";
 import { Reveal } from "../Reveal";
-import { SectionHead } from "../SectionHead";
 import { Slide } from "../Slide";
 
 type Card = { shot: string; w: number; h: number; title: string; body: string; alt: string };
 
-const GRID: Card[] = [
+const CARDS: Card[] = [
   {
     shot: "brief",
     w: 1878,
@@ -34,9 +34,6 @@ const GRID: Card[] = [
     body: "Numbered steps with the agent on each, plus time and agent cost until MVP.",
     alt: "Roadmap: a numbered stepper with done, current and next steps and an MVP divider.",
   },
-];
-
-const CAROUSEL: Card[] = [
   {
     shot: "terminal",
     w: 1714,
@@ -50,126 +47,162 @@ const CAROUSEL: Card[] = [
     w: 1714,
     h: 691,
     title: "Versions",
-    body: "Agents save a version when tests pass. Bring the project back to any version, compare it with now, or undo one agent.",
+    body: "Agents save a version when tests pass. Bring back any version, compare it with now, or undo one agent.",
     alt: "Versions: the rule that agents save a version when tests pass, and a timeline of versions with restore actions.",
   },
 ];
 
-const INTERVAL = 3000;
+const TITLES = CARDS.map((c) => c.title);
+const INTERVAL = 4000;
+const N = CARDS.length;
 
-// Both themes' crops; CSS shows the one for the current theme. Sized by height so the card never outgrows the slide.
-function Crop({ c, sizes }: { c: Card; sizes: string }) {
-  return (
-    <div className="fit-w" style={{ "--ar": c.w / c.h } as CSSProperties}>
-      {(["light", "dark"] as const).map((t) => (
-        <Image
-          key={t}
-          src={`/shots/${t}-${c.shot}-crop.webp`}
-          alt={c.alt}
-          width={c.w}
-          height={c.h}
-          sizes={sizes}
-          quality={90}
-          className={`${t === "light" ? "only-light" : "only-dark"} h-auto w-full rounded-[10px] border border-line`}
-        />
-      ))}
-    </div>
-  );
-}
+// Signed distance from the card in focus, wrapped so the row loops: -2 … 2 for five cards.
+const offset = (i: number, active: number) => {
+  let d = (i - active + N) % N;
+  if (d > N / 2) d -= N;
+  return d;
+};
 
 export function Bento() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const { index: active, setIndex, next, playing, reduced, bind } = useAutoplay(CAROUSEL.length, rootRef);
+  const { index: active, setIndex, next, prev, playing, reduced, bind } = useAutoplay(N, rootRef);
+  const [drag, setDrag] = useState<number | null>(null);
+  const start = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+
+  // Drag or swipe sideways to move one card; a vertical swipe still scrolls the page.
+  const onPointerDown = (e: ReactPointerEvent) => {
+    if (e.button !== 0) return;
+    start.current = { x: e.clientX, y: e.clientY, moved: false };
+    const move = (ev: PointerEvent) => {
+      const s = start.current;
+      if (!s) return;
+      const dx = ev.clientX - s.x;
+      if (!s.moved && Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(ev.clientY - s.y)) s.moved = true;
+      if (s.moved) setDrag(dx);
+    };
+    const up = (ev: PointerEvent) => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+      const s = start.current;
+      setDrag(null);
+      if (!s?.moved) return;
+      const dx = ev.clientX - s.x;
+      if (dx < -50) next();
+      else if (dx > 50) prev();
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+  };
 
   return (
-    <Slide id="more">
-      <SectionHead label="And the rest of the day" title="Plan, track, roll back." rest="Without opening five other tools." />
+    <Slide id="more" bodyClassName="max-w-none">
+      <Reveal className="mx-auto max-w-6xl text-center">
+        <p className="label">And the rest of the day</p>
+        <h2 className="mt-3 text-[30px] leading-[1.12] font-semibold tracking-[-0.03em] text-balance sm:text-[40px] deck:mt-[clamp(4px,1vh,10px)] deck:text-[clamp(22px,3.9vh,38px)]">
+          Plan, track, roll back. <span className="text-faint">Without opening five other tools.</span>
+        </h2>
+      </Reveal>
 
-      <div
-        className="mt-6 grid gap-4 md:grid-cols-3 deck:mt-[clamp(10px,2.2vh,28px)] deck:gap-[clamp(10px,1.8vh,16px)]"
-        style={{ "--fit-h-deck": "calc(22svh)" } as CSSProperties}
-      >
-        {GRID.map((c, i) => (
-          <Reveal
-            key={c.shot}
-            delay={i * 70}
-            className="glass-panel flex flex-col overflow-hidden rounded-[18px] p-4 deck:p-[clamp(10px,1.8vh,16px)]"
-          >
-            <h3 className="text-[16px] font-semibold tracking-[-0.01em]">{c.title}</h3>
-            <p className="mt-1 text-[13.5px] text-muted deck:text-[clamp(12px,1.75vh,13.5px)]">{c.body}</p>
-            <div className="mt-3 flex flex-1 items-end deck:mt-[clamp(6px,1.4vh,12px)]">
-              <Crop c={c} sizes="(min-width: 1200px) 400px, (min-width: 768px) 33vw, 100vw" />
-            </div>
-          </Reveal>
-        ))}
-      </div>
-
-      <Reveal delay={200} className="mt-4 deck:mt-[clamp(10px,1.8vh,16px)]">
+      <Reveal delay={120} className="mt-6 deck:mt-[clamp(12px,2.6vh,28px)]">
         <div
           ref={rootRef}
           role="region"
           aria-roledescription="carousel"
           aria-label="More tools"
-          aria-live={playing ? "off" : "polite"}
           {...bind}
-          className="glass-panel grid gap-4 overflow-hidden rounded-[18px] p-4 md:grid-cols-[minmax(0,320px)_1fr] md:items-center md:gap-8 deck:p-[clamp(10px,1.8vh,16px)]"
-          style={{ "--fit-h-deck": "calc(26svh)" } as CSSProperties}
+          className="peek"
+          style={{ "--card-h-deck": "calc(100svh - var(--slide-pt) - var(--slide-pb) - 228px)" } as CSSProperties}
         >
-          <div>
-            <div role="tablist" aria-label="More tools" className="glass-surface inline-flex rounded-[10px] p-0.5">
-              {CAROUSEL.map((c, i) => (
-                <button
+          <div
+            id="more-cards"
+            aria-live={playing ? "off" : "polite"}
+            onPointerDown={onPointerDown}
+            onClickCapture={(e) => {
+              if (start.current?.moved) {
+                e.preventDefault();
+                e.stopPropagation();
+              }
+            }}
+            className="grid touch-pan-y overflow-x-clip py-3 select-none"
+          >
+            {CARDS.map((c, i) => {
+              const d = offset(i, active);
+              const on = d === 0;
+              const far = Math.abs(d) > 1;
+              // Percentages in translateX are of the card's own width.
+              const shift = `calc(${d} * (93% + 20px) + ${drag ?? 0}px)`;
+              return (
+                <article
                   key={c.shot}
-                  type="button"
-                  role="tab"
-                  id={`more-tab-${c.shot}`}
-                  aria-selected={i === active}
-                  aria-controls={`more-panel-${c.shot}`}
-                  tabIndex={i === active ? 0 : -1}
-                  onClick={() => setIndex(i)}
-                  onKeyDown={(e) => {
-                    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-                    e.preventDefault();
-                    const to = (active + (e.key === "ArrowRight" ? 1 : CAROUSEL.length - 1)) % CAROUSEL.length;
-                    setIndex(to);
-                    document.getElementById(`more-tab-${CAROUSEL[to].shot}`)?.focus();
+                  aria-hidden={!on}
+                  aria-roledescription="slide"
+                  aria-label={`${i + 1} of ${N}: ${c.title}`}
+                  onClick={on ? undefined : () => setIndex(i)}
+                  style={{
+                    transform: `translateX(${shift}) scale(${on ? 1 : 0.86})`,
+                    opacity: on ? 1 : far ? 0 : 0.5,
+                    zIndex: on ? 2 : far ? 0 : 1,
+                    width: "var(--card-w)",
                   }}
-                  className={`relative min-h-9 cursor-pointer rounded-[8px] px-4 pb-1 text-[13px] font-medium transition-[color,background-color,box-shadow] duration-300 ${
-                    i === active ? "bg-sel text-text shadow-[var(--sel-shadow)]" : "text-muted hover:text-text"
-                  }`}
+                  className={`glass-panel col-start-1 row-start-1 justify-self-center rounded-[20px] p-3 ease-[cubic-bezier(0.22,0.7,0.2,1)] ${
+                    drag === null ? "transition-[transform,opacity] duration-[650ms]" : ""
+                  } ${on ? "" : "cursor-pointer"}`}
                 >
-                  {c.title}
-                  {i === active && <ProgressBar index={active} ms={INTERVAL} playing={playing} reduced={reduced} onDone={next} />}
-                </button>
-              ))}
-            </div>
-            <div className="mt-3 grid">
-              {CAROUSEL.map((c, i) => (
-                <div
-                  key={c.shot}
-                  className={`col-start-1 row-start-1 transition-opacity duration-[600ms] ease-in-out ${i === active ? "visible opacity-100" : "invisible opacity-0"}`}
-                >
-                  <h3 className="text-[16px] font-semibold tracking-[-0.01em]">{c.title}</h3>
-                  <p className="mt-1 text-[13.5px] text-muted deck:text-[clamp(12px,1.75vh,13.5px)]">{c.body}</p>
-                </div>
-              ))}
-            </div>
+                  <div className="relative aspect-[1.8] overflow-hidden rounded-[12px] border border-line bg-[var(--surface)]">
+                    {(["light", "dark"] as const).map((t) => (
+                      <Image
+                        key={t}
+                        src={`/shots/${t}-${c.shot}-crop.webp`}
+                        alt={c.alt}
+                        width={c.w}
+                        height={c.h}
+                        sizes="(min-width: 768px) 1240px, 100vw"
+                        quality={90}
+                        draggable={false}
+                        className={`${t === "light" ? "only-light" : "only-dark"} absolute inset-0 size-full object-contain`}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex flex-col gap-0.5 px-1.5 pt-3 pb-0.5 sm:flex-row sm:items-baseline sm:gap-3">
+                    <h3 className="shrink-0 text-[16px] font-semibold tracking-[-0.01em]">{c.title}</h3>
+                    <p className="min-w-0 text-[13.5px] text-muted sm:truncate">{c.body}</p>
+                  </div>
+                </article>
+              );
+            })}
           </div>
 
-          <div className="grid overflow-x-clip">
-            {CAROUSEL.map((c, i) => (
-              <div
-                key={c.shot}
-                role="tabpanel"
-                id={`more-panel-${c.shot}`}
-                aria-labelledby={`more-tab-${c.shot}`}
-                className={`col-start-1 row-start-1 flex items-center justify-center transition-[opacity,transform,visibility] duration-[600ms] ease-in-out ${
-                  i === active ? "visible translate-x-0 opacity-100" : `invisible opacity-0 ${i < active ? "-translate-x-6" : "translate-x-6"}`
-                }`}
-              >
-                <Crop c={c} sizes="(min-width: 1200px) 800px, 100vw" />
-              </div>
-            ))}
+          <div className="mx-auto mt-2 flex w-[min(100%-32px,460px)] items-center gap-3 deck:mt-[clamp(4px,1vh,10px)]">
+            <button
+              type="button"
+              onClick={prev}
+              aria-label="Previous"
+              className="glass-surface flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:text-text"
+            >
+              <ChevronLeft size={17} />
+            </button>
+            <StoryBars
+              labels={TITLES}
+              index={active}
+              ms={INTERVAL}
+              playing={playing}
+              reduced={reduced}
+              onDone={next}
+              onSelect={setIndex}
+              label="More tools"
+              controls="more-cards"
+              className="flex-1"
+            />
+            <button
+              type="button"
+              onClick={next}
+              aria-label="Next"
+              className="glass-surface flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:text-text"
+            >
+              <ChevronRight size={17} />
+            </button>
           </div>
         </div>
       </Reveal>

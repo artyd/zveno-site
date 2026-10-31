@@ -163,33 +163,3 @@ export function StoryBars({
     </div>
   );
 }
-
-// The thin bar under the active tab. Finishing it moves the carousel on.
-export function ProgressBar({
-  index,
-  ms,
-  playing,
-  reduced,
-  onDone,
-}: {
-  index: number;
-  ms: number;
-  playing: boolean;
-  reduced: boolean;
-  onDone: () => void;
-}) {
-  return (
-    <span aria-hidden="true" className="absolute inset-x-3 bottom-1 h-[2px] overflow-hidden rounded-full bg-line-strong">
-      {reduced ? (
-        <span className="block h-full w-full rounded-full bg-accent" />
-      ) : (
-        <span
-          key={index}
-          className="autoplay-bar block h-full w-full rounded-full bg-accent"
-          style={{ "--ms": `${ms}ms`, animationPlayState: playing ? "running" : "paused" } as CSSProperties}
-          onAnimationEnd={onDone}
-        />
-      )}
-    </span>
-  );
-}
