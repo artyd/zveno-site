@@ -17,7 +17,11 @@ const description =
   "Zveno is a desktop app that runs a team of AI coding agents on your machine. Talk to the Orchestrator, review what the agents did, ship when tests pass.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://zveno.app"),
+  // Vercel sets VERCEL_PROJECT_PRODUCTION_URL at build time; a custom domain can override it.
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
+  ),
   title,
   description,
   openGraph: { title, description, type: "website", siteName: "Zveno" },
