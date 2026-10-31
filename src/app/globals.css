@@ -53,6 +53,11 @@
   --term-err: #ff8a80;
   --logo-filter: none;
   --spec: rgba(255, 255, 255, 0.6);
+  --frame-line: rgba(30, 40, 70, 0.14);
+  --frame-shadow: 0 2px 6px rgba(40, 50, 80, 0.06), 0 28px 70px -22px rgba(40, 50, 80, 0.32);
+  --glow-1: oklch(0.78 0.12 258 / 0.55);
+  --glow-2: oklch(0.85 0.11 175 / 0.5);
+  --glow-3: oklch(0.8 0.11 300 / 0.45);
 }
 
 [data-theme="dark"] {
@@ -99,6 +104,11 @@
   --term-bg: rgba(0, 0, 0, 0.45);
   --logo-filter: invert(1);
   --spec: rgba(255, 255, 255, 0.1);
+  --frame-line: rgba(255, 255, 255, 0.13);
+  --frame-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 36px 90px -24px rgba(0, 0, 0, 0.75);
+  --glow-1: oklch(0.55 0.17 268 / 0.5);
+  --glow-2: oklch(0.55 0.12 200 / 0.4);
+  --glow-3: oklch(0.5 0.15 320 / 0.38);
 }
 
 @theme inline {
@@ -482,10 +492,133 @@ html[data-deck] .slide.is-active .reveal-stagger > * {
   scroll-snap-align: start;
 }
 
-/* The hero screenshot makes room for the roster and deploy cards that sit beside it. */
-@media (min-width: 1180px) and (min-height: 600px) {
-  .hero-shot {
-    width: min(calc(100% - 450px), calc(var(--fit-h) * var(--ar, 1.6)));
-    margin-inline: 0;
+/* A screenshot frame: one clean hairline drawn over the image, no glass band. The image is scaled a hair so
+   the prototype window's own 1px edge never shows as a second line. */
+.shot-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--desk-base);
+  box-shadow: var(--frame-shadow);
+  isolation: isolate;
+}
+.shot-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--frame-line);
+  pointer-events: none;
+}
+.shot-frame img {
+  transform: scale(1.006);
+}
+@media (min-width: 640px) {
+  .shot-frame {
+    border-radius: 14px;
+  }
+}
+
+/* Idle motion. Everything below runs on transform or opacity and stops while its slide is off screen. */
+@keyframes popFloat {
+  0%, 100% { transform: translateY(0) rotate(var(--r0, 0deg)); }
+  50% { transform: translateY(-7px) rotate(var(--r1, 0deg)); }
+}
+@keyframes glowDrift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(var(--dx, 4%), var(--dy, -3%), 0) scale(1.08); }
+  100% { transform: translate3d(calc(var(--dx, 4%) * -0.6), calc(var(--dy, -3%) * -0.6), 0) scale(0.96); }
+}
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+@keyframes orbitBack {
+  to { transform: rotate(-360deg); }
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+@keyframes hintBob {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(5px); opacity: 1; }
+}
+@keyframes travel {
+  0% { transform: translateX(-100%); opacity: 0; }
+  20%, 80% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+.pop-float {
+  animation: popFloat var(--fd, 7s) ease-in-out var(--fdel, 0s) infinite;
+}
+.cover-glow > span {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform;
+  animation: glowDrift var(--dur, 22s) ease-in-out infinite alternate;
+}
+.orbit-spin {
+  animation: orbit var(--orbit, 48s) linear infinite;
+}
+.orbit-back {
+  animation: orbitBack var(--orbit, 48s) linear infinite;
+}
+.glow-pulse {
+  animation: glowPulse 4.5s ease-in-out infinite;
+}
+.hint-bob {
+  animation: hintBob 2.4s ease-in-out infinite;
+}
+.travel {
+  animation: travel 2.8s ease-in-out infinite;
+}
+.slide:not(.is-visible) :is(.pop-float, .cover-glow > span, .orbit-spin, .orbit-back, .glow-pulse, .hint-bob, .travel) {
+  animation-play-state: paused;
+}
+
+/* Product slide: the screenshot leaves at least 120px a side for the popups from 1180px up. Popups sit
+   150px outside the screenshot's edge, but never closer than 8px to the stage's edge. */
+.tour-stage {
+  --fit-h: 9999px;
+  --shot-w: min(100%, calc(var(--fit-h) * 1.6));
+  --side: max(8px, calc((100% - var(--shot-w)) / 2 - 150px));
+}
+@media (min-width: 768px) and (min-height: 600px) {
+  .tour-stage {
+    --fit-h: var(--fit-h-deck, 9999px);
+  }
+}
+@media (min-width: 1180px) {
+  .tour-stage {
+    --shot-w: min(calc(100% - 240px), calc(var(--fit-h) * 1.6));
+  }
+}
+.tour-shot {
+  width: var(--shot-w);
+  margin-inline: auto;
+}
+.pop-l {
+  left: var(--side);
+}
+.pop-r {
+  right: var(--side);
+}
+
+/* Carousel of large cards: the one in focus in the middle, its neighbours peeking at the sides. */
+.peek {
+  --card-h: 9999px;
+  --card-w: min(calc(100% - 48px), 560px);
+  mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+@media (min-width: 768px) {
+  .peek {
+    --card-w: min(calc(100% - 200px), 1240px);
+  }
+}
+@media (min-width: 768px) and (min-height: 600px) {
+  .peek {
+    --card-h: var(--card-h-deck, 9999px);
+    --card-w: min(calc(100% - 280px), calc(var(--card-h) * 1.8 + 24px), 1240px);
   }
 }

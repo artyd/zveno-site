@@ -27,7 +27,8 @@ export function Shot({
   );
 }
 
-// Glass edge around a screenshot; the screenshots already carry the app's own header and window controls.
+// Frame around a screenshot: a clean hairline and a soft shadow. The screenshots already carry the app's own header
+// and window controls.
 export function WindowFrame({
   children,
   className = "",
@@ -38,10 +39,7 @@ export function WindowFrame({
   style?: React.CSSProperties;
 }) {
   return (
-    <div
-      style={style}
-      className={`glass-window overflow-hidden rounded-[12px] p-1 sm:rounded-[20px] sm:p-1.5 [&_img]:rounded-[8px] sm:[&_img]:rounded-[14px] ${className}`}
-    >
+    <div style={style} className={`shot-frame ${className}`}>
       {children}
     </div>
   );
