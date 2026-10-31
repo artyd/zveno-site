@@ -83,7 +83,7 @@ export function FeatureTour() {
   };
 
   return (
-    <Slide id="tour" bodyClassName="max-w-[1360px]">
+    <Slide id="tour" bodyClassName="max-w-6xl">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between deck:gap-[clamp(10px,2vh,20px)]">
         <SectionHead className="lg:!max-w-[640px]" label="Product" title="Built for watching a team work." rest="And stepping in only when it matters." />
         <Reveal delay={80} className="-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0 lg:shrink-0 lg:overflow-visible lg:pb-0">

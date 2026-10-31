@@ -36,8 +36,8 @@ export function Security() {
               Your keys never leave your machine.
             </h2>
             <p className="mt-5 text-muted deck:mt-[clamp(8px,2vh,20px)] deck:text-[clamp(13px,1.9vh,15px)]">
-              Zveno is a desktop app, not a cloud IDE. The work happens where your code already is. Review links and the phone
-              companion go through an end-to-end encrypted relay that never holds your keys.
+              Zveno is a desktop app, not a cloud IDE. The work happens where your code already is. There is no Zveno
+              account and no Zveno server between you and your provider.
             </p>
             <div className="card mt-8 rounded-[12px] p-4 font-mono text-[12px] leading-relaxed deck:mt-[clamp(10px,3vh,32px)]">
               <p className="text-faint">Settings · Models & keys</p>
