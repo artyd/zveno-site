@@ -1,10 +1,12 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useRef, type CSSProperties, type KeyboardEvent } from "react";
+import { ProgressBar, useAutoplay } from "../Autoplay";
 import { Reveal } from "../Reveal";
 import { SectionHead } from "../SectionHead";
 import { Shot, WindowFrame } from "../Shot";
+import { Slide } from "../Slide";
 
 const TABS = [
   {
@@ -63,54 +65,34 @@ const TABS = [
   },
 ] as const;
 
+const INTERVAL = 3000;
+
 export function FeatureTour() {
-  const [active, setActive] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
-  const [plate, setPlate] = useState({ left: 0, width: 0 });
+  const { index: active, setIndex, next, playing, reduced, bind } = useAutoplay(TABS.length, rootRef);
 
-  useLayoutEffect(() => {
-    const update = () => {
-      const el = tabsRef.current[active];
-      if (el) setPlate({ left: el.offsetLeft, width: el.offsetWidth });
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, [active]);
-
+  // Left and right only: up and down still page the presentation.
   const onKey = (e: KeyboardEvent) => {
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     e.preventDefault();
-    const next = (active + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length;
-    setActive(next);
-    tabsRef.current[next]?.focus();
-    tabsRef.current[next]?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    const to = (active + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length;
+    setIndex(to);
+    tabsRef.current[to]?.focus();
+    tabsRef.current[to]?.scrollIntoView({ block: "nearest", inline: "nearest" });
   };
 
-  const tab = TABS[active];
-
   return (
-    <section id="tour" className="slide px-4 py-20 sm:px-6 sm:py-24">
-      <div className="mx-auto max-w-6xl">
-        <SectionHead label="Product" title="Built for watching a team work." rest="And stepping in only when it matters." />
-
-        <Reveal className="mt-10 -mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
+    <Slide id="tour" bodyClassName="max-w-[1360px]">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between deck:gap-[clamp(10px,2vh,20px)]">
+        <SectionHead className="lg:!max-w-[640px]" label="Product" title="Built for watching a team work." rest="And stepping in only when it matters." />
+        <Reveal delay={80} className="-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0 lg:shrink-0 lg:overflow-visible lg:pb-0">
           <div
             role="tablist"
             aria-label="Product tour"
             onKeyDown={onKey}
             className="glass-panel relative inline-flex rounded-[12px] p-1"
           >
-            <span
-              aria-hidden="true"
-              className="absolute top-1 bottom-1 rounded-[9px] bg-sel"
-              style={{
-                left: plate.left,
-                width: plate.width,
-                boxShadow: "var(--sel-shadow)",
-                transition: "left .45s cubic-bezier(.34,1.42,.5,1), width .45s cubic-bezier(.34,1.42,.5,1)",
-              }}
-            />
             {TABS.map((t, i) => (
               <button
                 key={t.id}
@@ -122,42 +104,69 @@ export function FeatureTour() {
                 aria-selected={i === active}
                 aria-controls={`panel-${t.id}`}
                 tabIndex={i === active ? 0 : -1}
-                onClick={() => setActive(i)}
-                className={`relative min-h-10 cursor-pointer rounded-[9px] px-4 text-[13.5px] font-medium transition-colors sm:min-w-[96px] ${
-                  i === active ? "text-text" : "text-muted hover:text-text"
+                onClick={() => setIndex(i)}
+                className={`relative min-h-10 cursor-pointer rounded-[9px] px-4 pb-1 text-[13.5px] font-medium transition-[color,background-color,box-shadow] duration-300 sm:min-w-[92px] ${
+                  i === active ? "bg-sel text-text shadow-[var(--sel-shadow)]" : "text-muted hover:text-text"
                 }`}
               >
                 {t.label}
+                {i === active && <ProgressBar index={active} ms={INTERVAL} playing={playing} reduced={reduced} onDone={next} />}
               </button>
             ))}
           </div>
         </Reveal>
-
-        <div
-          role="tabpanel"
-          id={`panel-${tab.id}`}
-          aria-labelledby={`tab-${tab.id}`}
-          className="mt-6 grid items-start gap-8 lg:grid-cols-[1fr_300px] lg:gap-10"
-        >
-          <WindowFrame key={tab.id} className="rise">
-            <Shot name={tab.shot} alt={tab.alt} sizes="(min-width: 1200px) 820px, 100vw" />
-          </WindowFrame>
-          <div key={`${tab.id}-text`} className="rise lg:pt-4">
-            <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em]">{tab.title}</h3>
-            <p className="mt-3 text-muted">{tab.body}</p>
-            <ul className="mt-6 space-y-3">
-              {tab.facts.map((f) => (
-                <li key={f} className="flex gap-3 text-[14px]">
-                  <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-ok-bg text-ok">
-                    <Check size={12} strokeWidth={2.5} />
-                  </span>
-                  {f}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
       </div>
-    </section>
+
+      <Reveal
+        delay={140}
+        className="mt-5 deck:mt-[clamp(10px,2.2vh,24px)]"
+      >
+        <div
+          ref={rootRef}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Product tour slides"
+          aria-live={playing ? "off" : "polite"}
+          {...bind}
+          className="grid overflow-x-clip"
+          style={{ "--fit-h-deck": "calc(87svh - 210px)" } as CSSProperties}
+        >
+          {TABS.map((tab, i) => {
+            const on = i === active;
+            return (
+              <div
+                key={tab.id}
+                role="tabpanel"
+                id={`panel-${tab.id}`}
+                aria-labelledby={`tab-${tab.id}`}
+                className={`col-start-1 row-start-1 grid items-center gap-5 transition-[opacity,transform,visibility] ease-in-out lg:grid-cols-[1fr_300px] lg:gap-10 ${
+                  on
+                    ? "visible translate-x-0 opacity-100 duration-[600ms]"
+                    : `invisible opacity-0 duration-[600ms] ${i < active ? "-translate-x-6" : "translate-x-6"}`
+                }`}
+              >
+                <WindowFrame className="fit-w !mx-auto lg:!mx-0 lg:justify-self-center" style={{ "--ar": 1.6 } as CSSProperties}>
+                  <Shot name={tab.shot} alt={tab.alt} sizes="(min-width: 1200px) 900px, 100vw" />
+                </WindowFrame>
+                <div>
+                  <h3 className="text-[22px] leading-snug font-semibold tracking-[-0.02em]">{tab.title}</h3>
+                  <p className="mt-3 text-muted">{tab.body}</p>
+                  <ul className="mt-5 space-y-3">
+                    {tab.facts.map((f) => (
+                      <li key={f} className="flex gap-3 text-[14px]">
+                        <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-ok-bg text-ok">
+                          <Check size={12} strokeWidth={2.5} />
+                        </span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Reveal>
+    </Slide>
   );
 }
