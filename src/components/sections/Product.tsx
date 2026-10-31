@@ -56,18 +56,7 @@ const SCREENS = [
 const LABELS = SCREENS.map((s) => s.label);
 const INTERVAL = 3500;
 
-type Pop = "team" | "question" | "deploy" | "toast" | "preview";
-
-// Which popups are up while each screen shows. They come and go with the slideshow like live notifications;
-// "question" and "preview" share a corner and are never up together.
-const POPS: Pop[][] = [
-  ["team", "toast"],
-  ["team", "question"],
-  ["deploy", "question"],
-  ["team", "deploy"],
-  ["preview", "toast"],
-  ["team", "deploy"],
-];
+// Every popup stays up and keeps floating around the screenshot; only the screens change.
 
 const ROSTER: { name: string; look: Look; mood: Mood; badge?: Badge; status: string; tone: string }[] = [
   { name: "Orchestrator", look: ORCH_LOOK, mood: "idle", status: "lead", tone: "text-answer bg-answer-bg" },
@@ -188,7 +177,6 @@ function PreviewThumb() {
 export function Product() {
   const rootRef = useRef<HTMLDivElement>(null);
   const { index: active, setIndex, next, playing, reduced, bind } = useAutoplay(SCREENS.length, rootRef);
-  const up = (p: Pop) => POPS[active].includes(p);
   const float = (fd: number, fdel: number, r0: number, r1: number) =>
     ({ "--fd": `${fd}s`, "--fdel": `${fdel}s`, "--r0": `${r0}deg`, "--r1": `${r1}deg` }) as CSSProperties;
 
@@ -227,19 +215,19 @@ export function Product() {
               </div>
             </WindowFrame>
 
-            <Popup on={up("team")} className="pop-l top-[7%] max-[1179px]:hidden" float={float(7.2, 0, -0.6, 0.4)}>
+            <Popup on className="pop-l top-[7%] max-[1179px]:hidden" float={float(7.2, 0, -0.6, 0.4)}>
               <Team />
             </Popup>
-            <Popup on={up("toast")} className="pop-l bottom-[9%] origin-bottom-left max-sm:scale-[0.78]" float={float(6.4, -2.1, 0.5, -0.4)}>
+            <Popup on className="pop-l bottom-[9%] origin-bottom-left max-sm:scale-[0.78]" float={float(6.4, -2.1, 0.5, -0.4)}>
               <Toast />
             </Popup>
-            <Popup on={up("question")} className="pop-r top-[6%] max-[1179px]:hidden" float={float(7.8, -1.2, 0.5, -0.5)}>
+            <Popup on className="pop-r top-[6%] max-[1179px]:hidden" float={float(7.8, -1.2, 0.5, -0.5)}>
               <Question />
             </Popup>
-            <Popup on={up("preview")} className="pop-r top-[6%] max-[1179px]:hidden" float={float(8.2, -3.3, -0.4, 0.5)}>
+            <Popup on className="pop-r top-[41%] max-[1179px]:hidden" float={float(8.2, -3.3, -0.4, 0.5)}>
               <PreviewThumb />
             </Popup>
-            <Popup on={up("deploy")} className="pop-r bottom-[8%] max-md:hidden" float={float(6.9, -4.2, -0.5, 0.5)}>
+            <Popup on className="pop-r bottom-[8%] max-md:hidden" float={float(6.9, -4.2, -0.5, 0.5)}>
               <Deploy />
             </Popup>
           </div>

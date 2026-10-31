@@ -1,7 +1,8 @@
 import { ArrowDown, ChevronDown } from "lucide-react";
 import type { CSSProperties } from "react";
 import { DOWNLOAD } from "@/lib/site";
-import { Mark, WindowsIcon } from "../Mark";
+import { Bug } from "../Bug";
+import { WindowsIcon } from "../Mark";
 import { Slide } from "../Slide";
 
 // Soft colour fields that drift behind the title. Radial gradients only, moved by transform.
@@ -68,23 +69,20 @@ export function Cover() {
         </>
       }
     >
-      <div className="rise mx-auto mb-[clamp(20px,4.2vh,44px)] w-fit">
-        <span className="pop-float glass-window flex size-[clamp(60px,8.4vh,80px)] items-center justify-center rounded-[clamp(18px,2.6vh,24px)] text-text">
-          <Mark size={44} className="h-auto w-[56%]" />
-        </span>
-      </div>
+      <p className="rise glass-surface mx-auto inline-flex items-center gap-2 rounded-full py-1 pr-3.5 pl-1.5 font-mono text-[11.5px] text-muted deck:text-[clamp(11px,1.5vh,13px)]">
+        <Bug look={{ hue: 250, pat: "dots" }} mood="working" size={20} />
+        Desktop app · Windows first
+      </p>
 
       <h1
-        className="rise mx-auto text-[44px] leading-[1] font-semibold tracking-[-0.045em] text-balance sm:text-[64px] sm:leading-[0.98] deck:text-[clamp(52px,min(10.4vh,7vw),148px)] deck:leading-[0.96]"
+        className="rise mx-auto mt-[clamp(14px,3vh,32px)] max-w-5xl text-[40px] leading-[1.04] font-semibold tracking-[-0.035em] text-balance sm:text-[60px] deck:max-w-[min(92vw,17.5em)] deck:text-[clamp(40px,8.4vh,96px)]"
         style={{ animationDelay: "80ms" }}
       >
-        The key link between
-        <br className="max-sm:hidden" /> an idea and a product
-        <br className="max-sm:hidden" /> <span className="text-accent">is you.</span>
+        The key link between an idea and a product <span className="text-accent">is you.</span>
       </h1>
 
       <p
-        className="rise mx-auto mt-[clamp(18px,3.6vh,36px)] max-w-2xl text-[17px] leading-relaxed text-muted text-pretty sm:text-lg deck:text-[clamp(15px,2.3vh,21px)]"
+        className="rise mx-auto mt-[clamp(14px,2.8vh,30px)] max-w-3xl text-[17px] leading-relaxed text-muted text-pretty sm:text-lg deck:text-[clamp(15px,2.3vh,21px)]"
         style={{ animationDelay: "160ms" }}
       >
         Zveno runs a team of AI coding agents on your own computer. You talk to the Orchestrator. It plans the work, hands it

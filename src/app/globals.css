@@ -521,8 +521,9 @@ html[data-deck] .slide.is-active .reveal-stagger > * {
 
 /* Idle motion. Everything below runs on transform or opacity and stops while its slide is off screen. */
 @keyframes popFloat {
-  0%, 100% { transform: translateY(0) rotate(var(--r0, 0deg)); }
-  50% { transform: translateY(-7px) rotate(var(--r1, 0deg)); }
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--r0, 0deg)); }
+  33% { transform: translate3d(5px, -12px, 0) rotate(var(--r1, 0deg)); }
+  66% { transform: translate3d(-4px, -5px, 0) rotate(var(--r0, 0deg)); }
 }
 @keyframes glowDrift {
   0% { transform: translate3d(0, 0, 0) scale(1); }
@@ -620,5 +621,22 @@ html[data-deck] .slide.is-active .reveal-stagger > * {
   .peek {
     --card-h: var(--card-h-deck, 9999px);
     --card-w: min(calc(100% - 280px), calc(var(--card-h) * 1.8 + 24px), 1240px);
+  }
+}
+
+/* Page scrollbar: a thin see-through glass thumb on no track, so it does not catch the eye. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+@supports not (scrollbar-color: auto) {
+  html::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
+  html::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    background: var(--line-strong) padding-box;
   }
 }
