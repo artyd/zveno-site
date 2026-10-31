@@ -25,6 +25,7 @@ export function Download() {
           Download for Windows
         </a>
         <p className="mt-4 font-mono text-[11.5px] text-faint">{DOWNLOAD.requirements}</p>
+        <p className="mt-2 text-[13px] text-muted">macOS and Linux builds are coming.</p>
       </Reveal>
       <div className="mx-auto mt-14 grid max-w-3xl gap-3 sm:grid-cols-3">
         {PLATFORMS.map(({ icon: Icon, ...p }, i) => (
