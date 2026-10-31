@@ -1,10 +1,10 @@
 import { Nav } from "@/components/Nav";
 import { Bento } from "@/components/sections/Bento";
-import { Cover } from "@/components/sections/Cover";
 import { Download } from "@/components/sections/Download";
-import { FeatureTour } from "@/components/sections/FeatureTour";
+import { Cover } from "@/components/sections/Cover";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Deck } from "@/components/Deck";
+import { Product } from "@/components/sections/Product";
 import { Providers } from "@/components/sections/Providers";
 import { Skills } from "@/components/sections/Skills";
 import { Security } from "@/components/sections/Security";
@@ -17,7 +17,7 @@ export default function Home() {
       <main>
         <Cover />
         <HowItWorks />
-        <FeatureTour />
+        <Product />
         <Bento />
         <Skills />
         <Providers />
